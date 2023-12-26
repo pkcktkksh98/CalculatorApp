@@ -257,7 +257,8 @@ const Calculator = () => {
         if(e.key==="ArrowUp"){
             console.log("History",history);
             console.log("arrow",history.length);
-            history.length > 1 && handleRestoreHistory(history[history.length-1]);
+            history.length > 1 && handleRestoreHistory(history[history.length-2]|| history[history.length-1]
+            );
         }
     };
 
