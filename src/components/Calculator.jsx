@@ -2,6 +2,7 @@ import { Divide, Dot, Equals, Percent, PlusMinus, X , Minus, Plus, Clock} from '
 import { ArrowUUpLeft } from '@phosphor-icons/react/dist/ssr';
 import React,{useEffect, useRef, useState} from 'react'
 import Button from './Button';
+import NumericFormat from './NumericFormat';
 import { render } from 'react-dom';
 
 const Buttons={
@@ -254,8 +255,9 @@ const Calculator = () => {
             handleKeyButtonPress("=");
         }
         if(e.key==="ArrowUp"){
-            console.log("arrow");
-            history.length>1 && handleRestoreHistory(history[history.length-1]);
+            console.log("History",history);
+            console.log("arrow",history.length);
+            history.length > 1 && handleRestoreHistory(history[history.length-1]);
         }
     };
 
@@ -325,6 +327,7 @@ const Calculator = () => {
     };
 
     const handleRestoreHistory=(historyItem)=>{
+        console.log("History",history);
         //restore all values
         setInputValue(historyItem.inputValue);
         setResult(historyItem.result);
@@ -340,9 +343,8 @@ const Calculator = () => {
 
         return inputValue.map((item,index)=> {
             return item.type === "number"
-            ?(
-                //lets format this long numbers with thousand seperator
-                <span key={index}>{item.label}</span>)
+            ?(//lets format this long numbers with thousand seperator
+                <NumericFormat key={index} value={item.value}/>)
             :(// if its operator add class primary
                 <span key={index} className='text-primary'>{item.label}</span>
             );
@@ -351,7 +353,7 @@ const Calculator = () => {
     return(
         <>
             <div className='mb-2 px-4'>
-                <div className='flex min-h-[9rem] flex-col item-end justify-end py-4 text-right'>
+                <div className='flex min-h-[9rem] flex-col items-end justify-end py-4 text-right'>
                 {/*history*/}
                 {history.length>1 && (
                     <div 
@@ -363,13 +365,24 @@ const Calculator = () => {
                         }
                     >
                         <Clock size={15}/>
-                        {history[history.length-2].result||history[history.length-1].result}
+                        <NumericFormat 
+                        value={history[history.length-2].result||
+                            history[history.length-1].result}
+                        />
                     </div>
                     )
                 }
-                    <span className='w-full text-6xl text-textDark dark:text-white'>
-                        {result}
-                    </span>
+                    <NumericFormat 
+                        value={result}
+                        className='w-full text-6xl text-textDark dark:text-white'
+                        maxLimit={20}
+                        autoTextSize={{
+                            mode:"oneline",
+                            minFontSize:20,
+                            maxFontSize:50,
+                        }}
+                    />
+                    
                 </div>
             </div>
             <div className='flex item-center justify-center bg-light-100 px-4 py-2 dark:bg-dark-100'>
